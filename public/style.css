@@ -1,3 +1,7 @@
+:root {
+	background-color: #0f0c2e;
+}
+
 #keyboardContainer {
 	width: 100%;
 	display: flex;
@@ -5,11 +9,21 @@
 	align-items: center;
 }
 
+#keyboard {
+	
+	background-color: #fff;
+}
+
 #mainContainer {
 	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	text-align: center;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	height: 80vh;
+}
+
+#mainContainer > h1, #mainContainer > p {
+	color: #fff;
 }

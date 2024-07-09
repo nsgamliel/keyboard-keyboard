@@ -72,6 +72,7 @@ var notes = {
 		wkID: 0,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'A',
 	},
 	's': {
@@ -79,6 +80,7 @@ var notes = {
 		wkID: 1,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'S',
 	},
 	'd': {
@@ -86,6 +88,7 @@ var notes = {
 		wkID: 2,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'D',
 	},
 	'f': {
@@ -93,6 +96,7 @@ var notes = {
 		wkID: 3,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'F',
 	},
 	'g': {
@@ -100,6 +104,7 @@ var notes = {
 		wkID: 4,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'G',
 	},
 	'h': {
@@ -107,6 +112,7 @@ var notes = {
 		wkID: 5,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'H',
 	},
 	'j': {
@@ -114,6 +120,7 @@ var notes = {
 		wkID: 6,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'J',
 	},
 	'k': {
@@ -121,6 +128,7 @@ var notes = {
 		wkID: 7,
 		bkID: -1,
 		pressed: false,
+		fading: false,
 		keyName: 'K',
 	},
 	'w': {
@@ -128,6 +136,7 @@ var notes = {
 		wkID: -1,
 		bkID: 0,
 		pressed: false,
+		fading: false,
 		keyName: 'W',
 	},
 	'e': {
@@ -135,6 +144,7 @@ var notes = {
 		wkID: -1,
 		bkID: 1,
 		pressed: false,
+		fading: false,
 		keyName: 'E',
 	},
 	't': {
@@ -142,6 +152,7 @@ var notes = {
 		wkID: -1,
 		bkID: 3,
 		pressed: false,
+		fading: false,
 		keyName: 'T',
 	},
 	'y': {
@@ -149,6 +160,7 @@ var notes = {
 		wkID: -1,
 		bkID: 4,
 		pressed: false,
+		fading: false,
 		keyName: 'Y',
 	},
 	'u': {
@@ -156,18 +168,21 @@ var notes = {
 		wkID: -1,
 		bkID: 5,
 		pressed: false,
+		fading: false,
 		keyName: 'U',
 	},
 };
 
 drawKeyboard(notes);
 
+
+
 document.addEventListener('keydown', (event) => {
 	var note = notes[event.key];
-	if (note) {
-		note.audio.volume = 0.5;
-		note.audio.play();
+	if (note && !note.pressed) {
 		note.pressed = true;
+		note.audio.volume = 0.2;
+		note.audio.play();
 		drawKeyboard(notes);
 	}
 });
@@ -175,25 +190,32 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
 	var note = notes[event.key];
 	if (note) {
-		note.audio.pause();
-		note.audio.currentTime = 0;
 		note.pressed = false;
+		var fadeout = setInterval(() => {
+			note.fading = true;
+			if (note.pressed) {
+				clearInterval(fadeout);
+				note.audio.volume = 0.2;
+				note.audio.pause();
+				note.audio.currentTime = 0;
+				note.audio.play();
+			} else if (note.audio.volume > 0.01) {
+				note.audio.volume -= 0.05;
+			} else {
+				note.fading = false;
+				clearInterval(fadeout);
+				note.audio.volume = 0.2;
+				note.audio.pause();
+				note.audio.currentTime = 0;
+			}
+		}, 25);
 		drawKeyboard(notes);
 	}
 });
 
 
 // fadeout experiments in case you ever want to come back to it
-// var fadeout = setInterval(() => {
-// 	if (note.volume > 0.1) {
-// 		note.volume -= 0.2;
-// 	} else {
-// 		clearInterval(fadeout);
-// 		note.volume = 1;
-// 		note.pause();
-// 		note.currentTime = 0;
-// 	}
-// }, 25);
+
 
 // reset everything in case note is still fading out
 // note.volume = 1;
